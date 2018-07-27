@@ -14,6 +14,14 @@ export class Gameboard extends React.Component {
   }
   element = []
 
+  checkWinner(seq){
+    let seq_equal = this.state.fixed_seq.join() === seq.join()
+    this.setState({
+          step: seq_equal ? "You Win" : "You Lose",
+          isWinner: seq_equal ? 1 : 0,
+    })
+  }
+
   setSteps() {
     switch (this.state.step) {
       case "Begin":
@@ -21,8 +29,10 @@ export class Gameboard extends React.Component {
         this.element =
           <Scale
             isPlayable={true}
-            reportRecordedSeq={(r) => console.log("recorded", r)}
-            reportInitialSeq={(i) => console.log("initial on parent", i)}
+            reportRecordedSeq={(seq) => this.checkWinner(seq)}
+            reportInitialSeq={(seq) => this.setState({
+              fixed_seq: seq
+            })}
             noteNumber={5}
           />
         break;

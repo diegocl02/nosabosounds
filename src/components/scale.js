@@ -32,12 +32,12 @@ export class Scale extends Component {
 
         var melody = new Tone.Sequence((time, note) => {
             synth.triggerAttackRelease(note, '4n', time);
-        }, this.newNotes).start();
+        }, this.newNotes);
 
-        melody.start(0).stop("1:1");
+        melody.start("4n").stop("1:2");
         melody.loop = 1
         Tone.Transport.bpm.value = 60
-        Tone.Transport.start(1);
+        Tone.Transport.start();
     }
 
     playNote(n) {
@@ -70,9 +70,13 @@ export class Scale extends Component {
             setInterval(() => {
                 if (i < 5) {
                     this.setState({
-                        note: this.newNotes[i][0]
+                        notePlaying: newSeq[i][1]
                     })
                     i++;
+                } else if (i === 5) {
+                  this.setState({
+                      notePlaying: null
+                  })
                 }
             }, 1000)
         }
