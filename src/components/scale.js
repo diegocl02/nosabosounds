@@ -1,16 +1,18 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import Tone from 'tone'
+import { Note } from './note'
 
 export class Scale extends Component {
 
     notes = ["C4", "D4", "E4", "G4", "A4"]
     newNotes = []
 
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             note: null,
-            recordedNotes: []
+            recordedNotes: [],
+            notePlaying: null
         }
     }
 
@@ -23,14 +25,14 @@ export class Scale extends Component {
         return newSeq
     }
 
-    playInitialNotes(){
+    playInitialNotes() {
         let synth = new Tone.Synth().toMaster()
         let time = '8n'
         console.log(this.newNotes)
-        
+
         var melody = new Tone.Sequence((time, note) => {
             synth.triggerAttackRelease(note, '4n', time);
-          }, this.newNotes).start();
+        }, this.newNotes).start();
 
         melody.start(0).stop("1:1");
         melody.loop = 1
@@ -38,7 +40,7 @@ export class Scale extends Component {
         Tone.Transport.start(1);
     }
 
-    playNote(n){
+    playNote(n) {
         let synth = new Tone.Synth().toMaster()
         synth.triggerAttackRelease(this.notes[n], "8n");
 
@@ -47,41 +49,65 @@ export class Scale extends Component {
         if (newRecordedNotes.length === 5) {
             this.props.reportRecordedSeq(newRecordedNotes)
             this.setState({
-                recordedNotes : []
+                recordedNotes: []
             })
         } else if (newRecordedNotes.length < 5) {
             this.setState({
-                recordedNotes : newRecordedNotes
+                recordedNotes: newRecordedNotes
             })
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let newSeq = this.generateRandomSeq(5)
-        this.newNotes = newSeq.map((el) => {return el[0]})
+        this.newNotes = newSeq.map((el) => { return el[0] })
 
-        if(this.props.isPlayable){
+        if (this.props.isPlayable) {
             this.playInitialNotes()
             let i = 0
 
             this.props.reportInitialSeq(newSeq.map(el => el[1]))
-            setInterval(()=> {
+            setInterval(() => {
                 if (i < 5) {
-                this.setState({
-                    note: this.newNotes[i][0]
-                })
-                i++;
-            }
+                    this.setState({
+                        note: this.newNotes[i][0]
+                    })
+                    i++;
+                }
             }, 1000)
         }
     }
 
-    render(){
-        console.log("this state", this.state)
-        return ([
-            <div onClick={() => {}}> <h1>{this.state.note} </h1></div>,
-            <div onClick={() => {this.playNote(2)}}> <h1> play note! </h1></div>
-        ]
+    handleNoteClicked(n) {
+        this.playNote(n)
+
+        this.setState({
+            notePlaying: n
+        })
+    }
+
+
+
+    createNoteBoard() {
+        let element = new Array(this.props.noteNumber).fill(null)
+        let newElement = element.map((element, index) =>
+            <div>
+                <Note
+                    size={"30px"}
+                    color={index === this.state.notePlaying ? "red" : "black"}
+                    onNoteClick={() => this.handleNoteClicked(index)}
+                />
+            </div>
+        )
+        return newElement
+    }
+
+    render() {
+        console.log(this.state)
+        return (
+            <div className="noteboard">
+                {this.createNoteBoard()}
+            </div>
         )
     }
 }

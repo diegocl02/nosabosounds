@@ -1,0 +1,21 @@
+.announcer {
+  margin-top: 40px;
+  display:inline-block;
+  color:#444;
+  border:1px solid #CCC;
+  background:#DDD;
+  box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+  cursor:pointer;
+  vertical-align:middle;
+  max-width: 100px;
+  padding: 5px;
+  text-align: center;
+}
+
+.noteboard {
+  margin-top: 40px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
