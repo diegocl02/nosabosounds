@@ -1,4 +1,5 @@
 import React from 'react';
+import {Scale} from './scale';
 import '../styles.css';
 
 export class Gameboard extends React.Component {
@@ -17,7 +18,10 @@ export class Gameboard extends React.Component {
     switch (this.state.step) {
       case "Begin":
         this.setState({step: "Listen"})
-        // element = <Scale />
+        this.element =
+        <Scale
+          noteNumber = {5}
+        />
         break;
       case "Listen":
         this.setState({step: "Scale Play"})
@@ -43,9 +47,7 @@ export class Gameboard extends React.Component {
         <div className="announcer" onClick={() => this.setSteps()}>
           {this.state.step}
         </div>
-        <div>
           {this.element}
-        </div>
       </div>
     );
   }

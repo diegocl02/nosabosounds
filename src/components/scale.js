@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import Tone from 'tone'
+import {Note} from './note'
 
 export class Scale extends Component {
 
@@ -8,8 +9,9 @@ export class Scale extends Component {
     constructor(props){
         super(props)
         this.state = {
-
+            notePlaying: null
         }
+        this.createNoteBoard();
     }
 
     playSound(){
@@ -24,9 +26,34 @@ export class Scale extends Component {
         Tone.Transport.start();
     }
 
+    handleNoteClicked(n){
+      this.setState({
+        notePlaying: n
+      })
+    }
+
+
+
+    createNoteBoard() {
+      let element = new Array(this.props.noteNumber).fill(null)
+      let newElement = element.map((element, index) =>
+            <div>
+              <Note
+                size = {"30px"}
+                color = {index === this.state.notePlaying ? "red" : "black"}
+                onNoteClick = {() => this.handleNoteClicked(index)}
+              />
+            </div>
+          )
+      return newElement
+    }
+
     render(){
+      console.log(this.state)
         return (
-            <div onClick={() => {this.playSound()}}> Hello </div>
+          <div className="noteboard">
+            {this.createNoteBoard()}
+          </div>
         )
     }
 }
