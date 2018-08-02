@@ -21,6 +21,8 @@ export class Gameboard extends React.Component {
           isWinner: seq_equal ? 1 : 0,
           record_seq: seq
     })
+    if (seq_equal) this.props.OnWin()
+    else this.props.OnLose()
   }
 
   generateRandomSeq(numberOfNotes) {
