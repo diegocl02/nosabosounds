@@ -12,6 +12,20 @@
   text-align: center;
 }
 
+.announcerAlternative {
+  margin-top: 40px;
+  display:inline-block;
+  color:rgb(49, 49, 49);
+  border:1px solid #CCC;
+  background:rgb(255, 255, 255);
+  box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+  cursor:pointer;
+  vertical-align:middle;
+  max-width: 30vw;
+  padding: 5px;
+  text-align: center;
+}
+
 .noteboard {
   margin-top: 40px;
   padding: 5px;

@@ -11,56 +11,63 @@ export class Gameboard extends React.Component {
 
     this.state = {
       isWinner: 0,
-      step: "Begin",
+      step: this.steps[0],
       seq: this.generateRandomSeq(notesSeq, notesSca),
       record_seq: []
     }
   }
 
-  generateScale = () =>  <Scale
-      isPlayable={this.state.step === "Try to play the same melody"}
-      reportRecordedSeq={(seq) => this.checkWinner(seq)}
-      reportPlayFinish={() => this.setState({
-        step: "Try to play the same melody"
-      })}
-      noteNumber={config.difficulty[this.props.difficulty].notesInScale}
-      sequence={this.state.seq}
-      bpm={120} />
+  steps = {
+    0: "Begin",
+    1: "You Win, play Again?",
+    2: "You Lose, Try again?"
+  }
 
-  checkWinner(seq){
+  generateScale = () => <Scale
+    isPlayable={this.state.step === "Now, try to play the same melody"}
+    reportRecordedSeq={(seq) => this.checkWinner(seq)}
+    reportPlayFinish={() => this.setState({
+      step: "Now, try to play the same melody"
+    })}
+    noteNumber={config.difficulty[this.props.difficulty].notesInScale}
+    sequence={this.state.seq}
+    bpm={120} />
+
+  checkWinner(seq) {
     let seq_equal = this.state.seq.join() === seq.join()
     this.setState({
-          step: seq_equal ? "You Win, next?" : "You Lose, Try again?",
-          isWinner: seq_equal ? 1 : 0,
-          record_seq: seq
+      step: seq_equal ? "You Win, play Again?" : "You Lose, Try again?",
+      isWinner: seq_equal ? 1 : 0,
+      record_seq: seq
     })
     if (seq_equal) this.props.OnWin()
     else this.props.OnLose()
   }
 
   generateRandomSeq(numberOfNotes, maxScale) {
-      let newSeq = []
-      for (let i = 0; i < numberOfNotes; i++) {
-          let ranIndex = Math.floor(Math.random() * maxScale)
-          newSeq.push(ranIndex)
-      }
-      return newSeq
+    let newSeq = []
+    for (let i = 0; i < numberOfNotes; i++) {
+      let ranIndex = Math.floor(Math.random() * maxScale)
+      newSeq.push(ranIndex)
+    }
+    return newSeq
   }
 
   setSteps() {
     switch (this.state.step) {
       case "Begin":
-        this.setState({ step: "Listen the melody" })
+        this.setState({ step: "First listen to the melody..." })
         break;
-      case "Listen the melody":
+      case "First listen to the melody...":
         break;
-      case "Try to play the same melody":
+      case "Now, try to play the same melody":
         break;
       default:
         this.setState({
           step: "Begin",
           seq: this.generateRandomSeq(config.difficulty[this.props.difficulty].notesInSequence,
-            config.difficulty[this.props.difficulty].notesInScale), record_seq: [] })
+            config.difficulty[this.props.difficulty].notesInScale), record_seq: []
+        })
         break;
     }
   }
@@ -70,18 +77,18 @@ export class Gameboard extends React.Component {
       this.setState({
         step: "Begin",
         seq: this.generateRandomSeq(config.difficulty[this.props.difficulty].notesInSequence,
-          config.difficulty[this.props.difficulty].notesInScale), record_seq: [] })
+          config.difficulty[this.props.difficulty].notesInScale), record_seq: []
+      })
     }
   }
 
   render() {
-    // console.log("config", config)
-    console.log("state in gameboard", this.state, this.props)
-    // console.log('isplayable',this.state.step === "Try to play the same melody")
-    // console.log('config',config.difficulty[this.props.difficulty])
+    // console.log("state in gameboard", this.state, this.props)
     return (
       <div className="gameboard">
-        <div className="announcer" style={{width: "30vw"}} onClick={() => this.setSteps()}>
+        <div className={
+          this.state.step === this.steps[0] || this.state.step === this.steps[1] || this.state.step === this.steps[2]
+            ? "announcer" : "announcerAlternative"} style={{ width: "30vw" }} onClick={() => this.setSteps()}>
           {this.state.step}
         </div>
         {this.state.step !== 'Begin' ? this.generateScale() : null}

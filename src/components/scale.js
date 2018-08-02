@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Tone from 'tone'
 import { Note } from './note'
+import { config } from '../config'
 
 export class Scale extends Component {
 
@@ -14,15 +15,6 @@ export class Scale extends Component {
             recordedNotes: [],
             notePlaying: null
         }
-    }
-
-    generateRandomSeq(nSeq) {
-        let newSeq = []
-        for (let i = 0; i < nSeq; i++) {
-            let ranIndex = Math.floor(Math.random() * 5)
-            newSeq.push([this.notes[ranIndex], ranIndex])
-        }
-        return newSeq
     }
 
     playInitialNotes() {
@@ -100,23 +92,35 @@ export class Scale extends Component {
         })
     }
 
+    noteStyle = {
+        transition: `all 0.3s`
+    }
+
     createNoteBoard() {
         let element = new Array(this.props.noteNumber).fill(null)
         let newElement = element.map((element, index) =>
-            <div>
-                <Note
-                    size={"10vw"}
-                    color={index === this.state.notePlaying ? "#FA8072" : "black"}
-                    onNoteClick={() => {if (this.props.isPlayable) this.handleNoteClicked(index)}}
-                />
-            </div>
+            // <div>
+            //     <Note
+            //         size={"10vw"}
+            //         color={index === this.state.notePlaying ? "#FA8072" : "black"}
+            //         onNoteClick={() => {if (this.props.isPlayable) this.handleNoteClicked(index)}}
+            //     />
+            // </div>
+            <div style={{ ...this.noteStyle, fill: (index === this.state.notePlaying ? config.theme.colors.alternative3 : "black"), cursor: "pointer"}}>
+            <Note
+                size={"10vw"}
+                color={"inherit"}
+                onNoteClick={() => {if (this.props.isPlayable) this.handleNoteClicked(index)}}
+            />
+        </div>
+            
         )
         return newElement
     }
 
     render() {
         // console.log('State in Scale', this.state)
-        console.log('Props in Scale', this.props)
+        // console.log('Props in Scale', this.props)
         return (
             <div className="noteboard">
                 {this.createNoteBoard()}

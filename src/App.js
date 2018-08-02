@@ -3,14 +3,22 @@ import './App.css';
 import { Gameboard } from './components/gameboard';
 import * as Actions from './redux/actions'
 import { connect } from 'react-redux'
+import { config } from './config'
 
 class App extends Component {
   styleSwitch = {
     width: "30%",
     border: "thin solid gray",
+    borderWidth: "thin",
     padding: "0.5em",
-    height: "2em",
-    margin: "1em"
+    height: "1em",
+    margin: "1em",
+    cursor: "pointer"
+  }
+
+  styleSelected = {
+    borderColor: config.theme.colors.border, 
+    borderWidth: "2px"
   }
 
   render() {
@@ -21,13 +29,13 @@ class App extends Component {
           <div style={{width: "40%"}}><p>Wins: {this.props.wins}</p>
           <p>Loses: {this.props.loses}</p></div>
           <div style={{display: "flex", flexDirection: "row", width: "30%"}}>
-          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'easy' ? {borderColor: "red"}: null)}}
+          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'easy' ? this.styleSelected: null)}}
             onClick={() => this.props.changeDifficulty('easy')}
           > Easy </div>
-          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'medium' ? {borderColor: "red"}: null)}}
+          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'medium' ? this.styleSelected: null)}}
             onClick={() => this.props.changeDifficulty('medium')}
           > Medium </div>
-            <div style={{...this.styleSwitch, ...(this.props.difficulty === 'hard' ? {borderColor: "red"}: null)}}
+            <div style={{...this.styleSwitch, ...(this.props.difficulty === 'hard' ? this.styleSelected: null)}}
               onClick={() => this.props.changeDifficulty('hard')}
             > Hard </div></div>
       </div>
