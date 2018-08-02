@@ -20,6 +20,8 @@ export class Gameboard extends React.Component {
           step: seq_equal ? "You Win" : "You Lose",
           isWinner: seq_equal ? 1 : 0,
     })
+    if (seq_equal) this.props.OnWin()
+    else this.props.OnLose()
   }
 
   setSteps() {
