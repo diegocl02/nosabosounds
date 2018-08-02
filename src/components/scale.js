@@ -26,79 +26,83 @@ export class Scale extends Component {
     }
 
     playInitialNotes() {
+        Tone.Transport.stop()
+        Tone.Transport.cancel()
+        let newSeq = this.props.sequence
+        this.newNotes = newSeq.map((el) => { return this.notes[el] })
+
         let synth = new Tone.Synth().toMaster()
         let time = '8n'
-        console.log(this.newNotes)
-
+        let i = 0;
         var melody = new Tone.Sequence((time, note) => {
             synth.triggerAttackRelease(note, '4n', time);
+
+            Tone.Draw.schedule(() => {
+              this.setState({
+                  notePlaying: newSeq[i++]
+              })
+              if (i === newSeq.length) {
+                setTimeout(() => {
+                  this.setState({
+                      notePlaying: null
+                  })
+                  this.props.reportPlayFinish()
+                }, 500)
+              }
+            })
         }, this.newNotes);
 
         melody.start("4n").stop("1:2");
         melody.loop = 1
-        Tone.Transport.bpm.value = 60
+        Tone.Transport.bpm.value = this.props.bpm
         Tone.Transport.start();
     }
 
     playNote(n) {
+        let numberOfNotes = this.props.sequence.length
         let synth = new Tone.Synth().toMaster()
         synth.triggerAttackRelease(this.notes[n], "8n");
-
         let newRecordedNotes = [...this.state.recordedNotes]
+
         newRecordedNotes.push(n)
-        if (newRecordedNotes.length === 5) {
+        if (newRecordedNotes.length === numberOfNotes) {
             this.props.reportRecordedSeq(newRecordedNotes)
             this.setState({
                 recordedNotes: []
             })
-        } else if (newRecordedNotes.length < 5) {
+        } else if (newRecordedNotes.length < numberOfNotes) {
             this.setState({
                 recordedNotes: newRecordedNotes
             })
         }
     }
 
-    componentDidMount() {
-        let newSeq = this.generateRandomSeq(5)
-        this.newNotes = newSeq.map((el) => { return el[0] })
-
-        if (this.props.isPlayable) {
-            this.playInitialNotes()
-            let i = 0
-
-            this.props.reportInitialSeq(newSeq.map(el => el[1]))
-            setInterval(() => {
-                if (i < 5) {
-                    this.setState({
-                        notePlaying: newSeq[i][1]
-                    })
-                    i++;
-                } else if (i === 5) {
-                  this.setState({
-                      notePlaying: null
-                  })
-                }
-            }, 1000)
+    componentDidUpdate(nextProps) {
+      // console.log("Did update!", nextProps.sequence.join(',') !== this.props.sequence.join(','), nextProps.sequence, this.props.sequence)
+        if (nextProps.sequence.join(',') !== this.props.sequence.join(',')) {
+          this.playInitialNotes()
+          console.log("Props updated!")
         }
+    }
+
+    componentDidMount() {
+        setTimeout(() => this.playInitialNotes(), 500)
     }
 
     handleNoteClicked(n) {
         this.playNote(n)
-
         this.setState({
             notePlaying: n
         })
     }
-
-
 
     createNoteBoard() {
         let element = new Array(this.props.noteNumber).fill(null)
         let newElement = element.map((element, index) =>
             <div>
                 <Note
-                    size={"30px"}
-                    color={index === this.state.notePlaying ? "red" : "black"}
+                    size={"10vw"}
+                    color={index === this.state.notePlaying ? "#FA8072" : "black"}
                     onNoteClick={() => this.handleNoteClicked(index)}
                 />
             </div>
@@ -107,7 +111,7 @@ export class Scale extends Component {
     }
 
     render() {
-        console.log(this.state)
+        // console.log('State in Scale', this.state)
         return (
             <div className="noteboard">
                 {this.createNoteBoard()}

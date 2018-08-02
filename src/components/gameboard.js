@@ -8,24 +8,34 @@ export class Gameboard extends React.Component {
     this.state = {
       isWinner: 0,
       step: "Begin",
-      fixed_seq: [],
+      seq: this.generateRandomSeq(5),
       record_seq: [],
     }
   }
   element = []
 
   checkWinner(seq){
-    let seq_equal = this.state.fixed_seq.join() === seq.join()
+    let seq_equal = this.state.seq.join() === seq.join()
     this.setState({
-          step: seq_equal ? "You Win" : "You Lose",
+          step: seq_equal ? "You Win, Try again?" : "You Lose, Try again?",
           isWinner: seq_equal ? 1 : 0,
+          record_seq: seq
     })
+  }
+
+  generateRandomSeq(numberOfNotes) {
+      let newSeq = []
+      for (let i = 0; i < numberOfNotes; i++) {
+          let ranIndex = Math.floor(Math.random() * 5)
+          newSeq.push(ranIndex)
+      }
+      return newSeq
   }
 
   setSteps() {
     switch (this.state.step) {
       case "Begin":
-        this.setState({ step: "Listen" })
+        this.setState({ step: "Listen the melody" })
         this.element =
           <Scale
             isPlayable={true}
@@ -33,32 +43,29 @@ export class Gameboard extends React.Component {
             reportInitialSeq={(seq) => this.setState({
               fixed_seq: seq
             })}
-            noteNumber={5}
-          />
+            reportPlayFinish={() => {this.setState({
+              step: "Try to play the same melody"
+            }); console.log("reported")}}
+            noteNumber={5} // only works for 5 because don't know yet how to control time in transpose toneJs
+            sequence={this.state.seq}
+            bpm={140} />
         break;
-      case "Listen":
+      case "Listen the melody":
         this.setState({ step: "Scale Play" })
         break;
-      case "Scale Play":
-        this.setState({ step: "Scale Record" })
-        break;
-      case "Scale Record":
-        let seq_equal = this.state.fixed_seq.join() === this.state.record_seq.join()
-        this.setState({
-          step: seq_equal ? "You Win" : "You Lose",
-          isWinner: seq_equal ? 1 : 0,
-        })
+      case "Try to play the same melody":
         break;
       default:
-        this.setState({ step: "Begin" })
+        this.setState({ step: "Begin", seq: this.generateRandomSeq(5), record_seq: [] })
+        this.element = null
+        break;
     }
   }
 
   render() {
-    console.log(this.state.isWinner)
     return (
       <div className="gameboard">
-        <div className="announcer" onClick={() => this.setSteps()}>
+        <div className="announcer" style={{width: "30vw"}} onClick={() => this.setSteps()}>
           {this.state.step}
         </div>
         {this.element}
