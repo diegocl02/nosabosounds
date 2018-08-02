@@ -5,7 +5,8 @@ import {createStore} from 'redux'
 
 let initialState = {
   wins: 0,
-  loses: 0
+  loses: 0,
+  difficulty: 'easy'
 }
 
 export const store = createStore(reducer, initialState)

@@ -5,16 +5,38 @@ import * as Actions from './redux/actions'
 import { connect } from 'react-redux'
 
 class App extends Component {
+  styleSwitch = {
+    width: "30%",
+    border: "thin solid gray",
+    padding: "0.5em",
+    height: "2em",
+    margin: "1em"
+  }
+
   render() {
     return (
       <div className="App">
-        <p>Wins: {this.props.wins}</p>
-        <p>Loses: {this.props.loses}</p>
+        <div style={{display: "flex", justifyContent: "center"}}>
+          <div style={{width: "30%"}}></div>
+          <div style={{width: "40%"}}><p>Wins: {this.props.wins}</p>
+          <p>Loses: {this.props.loses}</p></div>
+          <div style={{display: "flex", flexDirection: "row", width: "30%"}}>
+          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'easy' ? {borderColor: "red"}: null)}}
+            onClick={() => this.props.changeDifficulty('easy')}
+          > Easy </div>
+          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'medium' ? {borderColor: "red"}: null)}}
+            onClick={() => this.props.changeDifficulty('medium')}
+          > Medium </div>
+            <div style={{...this.styleSwitch, ...(this.props.difficulty === 'hard' ? {borderColor: "red"}: null)}}
+              onClick={() => this.props.changeDifficulty('hard')}
+            > Hard </div></div>
+      </div>
         <Gameboard
           wins= {this.props.wins}
           loses= {this.props.loses}
           OnWin= {this.props.UpdateWin}
           OnLose= {this.props.UpdateLose}
+          difficulty= {this.props.difficulty}
         />
       </div>
     );
@@ -24,7 +46,8 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     wins: state.wins,
-    loses: state.loses
+    loses: state.loses,
+    difficulty: state.difficulty
   }
 }
 
@@ -35,6 +58,9 @@ const mapDispatchToProps = dispatch => {
     },
     UpdateLose: () => {
       dispatch(Actions.incrementLoses())
+    },
+    changeDifficulty: (diff) => {
+      dispatch(Actions.changeDifficulty(diff))
     }
   }
 }

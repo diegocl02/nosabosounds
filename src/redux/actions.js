@@ -5,3 +5,8 @@ export function incrementWins(){
 export function incrementLoses(){
   return({type: "INCREMENT_LOSES"})
 }
+export function changeDifficulty(diff){
+  return({type: "CHANGE_DIFFICULTY", payload: {
+    difficulty: diff
+  }})
+}

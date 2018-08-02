@@ -1,23 +1,36 @@
 import React from 'react';
 import { Scale } from './scale';
 import '../styles.css';
+import { config } from '../config'
 
 export class Gameboard extends React.Component {
   constructor(props) {
     super(props);
+    let notesSeq = config.difficulty[props.difficulty].notesInSequence
+    let notesSca = config.difficulty[props.difficulty].notesInScale
+
     this.state = {
       isWinner: 0,
       step: "Begin",
-      seq: this.generateRandomSeq(5),
-      record_seq: [],
+      seq: this.generateRandomSeq(notesSeq, notesSca),
+      record_seq: []
     }
   }
-  element = []
+
+  generateScale = () =>  <Scale
+      isPlayable={this.state.step === "Try to play the same melody"}
+      reportRecordedSeq={(seq) => this.checkWinner(seq)}
+      reportPlayFinish={() => this.setState({
+        step: "Try to play the same melody"
+      })}
+      noteNumber={config.difficulty[this.props.difficulty].notesInScale}
+      sequence={this.state.seq}
+      bpm={120} />
 
   checkWinner(seq){
     let seq_equal = this.state.seq.join() === seq.join()
     this.setState({
-          step: seq_equal ? "You Win, Try again?" : "You Lose, Try again?",
+          step: seq_equal ? "You Win, next?" : "You Lose, Try again?",
           isWinner: seq_equal ? 1 : 0,
           record_seq: seq
     })
@@ -25,10 +38,10 @@ export class Gameboard extends React.Component {
     else this.props.OnLose()
   }
 
-  generateRandomSeq(numberOfNotes) {
+  generateRandomSeq(numberOfNotes, maxScale) {
       let newSeq = []
       for (let i = 0; i < numberOfNotes; i++) {
-          let ranIndex = Math.floor(Math.random() * 5)
+          let ranIndex = Math.floor(Math.random() * maxScale)
           newSeq.push(ranIndex)
       }
       return newSeq
@@ -38,39 +51,40 @@ export class Gameboard extends React.Component {
     switch (this.state.step) {
       case "Begin":
         this.setState({ step: "Listen the melody" })
-        this.element =
-          <Scale
-            isPlayable={true}
-            reportRecordedSeq={(seq) => this.checkWinner(seq)}
-            reportInitialSeq={(seq) => this.setState({
-              fixed_seq: seq
-            })}
-            reportPlayFinish={() => {this.setState({
-              step: "Try to play the same melody"
-            }); console.log("reported")}}
-            noteNumber={5} // only works for 5 because don't know yet how to control time in transpose toneJs
-            sequence={this.state.seq}
-            bpm={140} />
         break;
       case "Listen the melody":
-        this.setState({ step: "Scale Play" })
         break;
       case "Try to play the same melody":
         break;
       default:
-        this.setState({ step: "Begin", seq: this.generateRandomSeq(5), record_seq: [] })
-        this.element = null
+        this.setState({
+          step: "Begin",
+          seq: this.generateRandomSeq(config.difficulty[this.props.difficulty].notesInSequence,
+            config.difficulty[this.props.difficulty].notesInScale), record_seq: [] })
         break;
     }
   }
 
+  componentDidUpdate(nextProps) {
+    if (nextProps.difficulty !== this.props.difficulty) {
+      this.setState({
+        step: "Begin",
+        seq: this.generateRandomSeq(config.difficulty[this.props.difficulty].notesInSequence,
+          config.difficulty[this.props.difficulty].notesInScale), record_seq: [] })
+    }
+  }
+
   render() {
+    // console.log("config", config)
+    console.log("state in gameboard", this.state, this.props)
+    // console.log('isplayable',this.state.step === "Try to play the same melody")
+    // console.log('config',config.difficulty[this.props.difficulty])
     return (
       <div className="gameboard">
         <div className="announcer" style={{width: "30vw"}} onClick={() => this.setSteps()}>
           {this.state.step}
         </div>
-        {this.element}
+        {this.state.step !== 'Begin' ? this.generateScale() : null}
       </div>
     );
   }

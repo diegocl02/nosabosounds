@@ -4,7 +4,7 @@ import { Note } from './note'
 
 export class Scale extends Component {
 
-    notes = ["C4", "D4", "E4", "G4", "A4"]
+    notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5"]
     newNotes = []
 
     constructor(props) {
@@ -29,10 +29,10 @@ export class Scale extends Component {
         Tone.Transport.stop()
         Tone.Transport.cancel()
         let newSeq = this.props.sequence
+        let seqLen = this.props.sequence.length
         this.newNotes = newSeq.map((el) => { return this.notes[el] })
 
         let synth = new Tone.Synth().toMaster()
-        let time = '8n'
         let i = 0;
         var melody = new Tone.Sequence((time, note) => {
             synth.triggerAttackRelease(note, '4n', time);
@@ -52,7 +52,9 @@ export class Scale extends Component {
             })
         }, this.newNotes);
 
-        melody.start("4n").stop("1:2");
+        let bars = Math.floor(seqLen / 4)
+        let quarters = seqLen % 4
+        melody.start(0).stop(`${bars}:${quarters}`); // "1:1 means 1 bar and 1 quarter"
         melody.loop = 1
         Tone.Transport.bpm.value = this.props.bpm
         Tone.Transport.start();
@@ -85,6 +87,8 @@ export class Scale extends Component {
         }
     }
 
+    componentWillUpdate(){}
+
     componentDidMount() {
         setTimeout(() => this.playInitialNotes(), 500)
     }
@@ -103,7 +107,7 @@ export class Scale extends Component {
                 <Note
                     size={"10vw"}
                     color={index === this.state.notePlaying ? "#FA8072" : "black"}
-                    onNoteClick={() => this.handleNoteClicked(index)}
+                    onNoteClick={() => {if (this.props.isPlayable) this.handleNoteClicked(index)}}
                 />
             </div>
         )
@@ -112,6 +116,7 @@ export class Scale extends Component {
 
     render() {
         // console.log('State in Scale', this.state)
+        console.log('Props in Scale', this.props)
         return (
             <div className="noteboard">
                 {this.createNoteBoard()}
