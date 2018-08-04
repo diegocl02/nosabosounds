@@ -8,15 +8,12 @@ export function reducer(state, action){
     case "INCREMENT_WINS":
       newState.wins += 1;
       return newState
-      break;
     case "INCREMENT_LOSES":
       newState.loses += 1;
       return newState
-      break;
     case "CHANGE_DIFFICULTY":
       newState.difficulty = action.payload.difficulty
       return newState
-      break;
     default:
       return (state)
   }

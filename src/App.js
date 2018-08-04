@@ -1,51 +1,64 @@
-import React, { Component } from 'react';
-import './App.css';
-import { Gameboard } from './components/gameboard';
-import * as Actions from './redux/actions'
-import { connect } from 'react-redux'
-import { config } from './config'
+import React, { Component } from "react";
+import "./App.css";
+import { Gameboard } from "./components/gameboard";
+import * as Actions from "./redux/actions";
+import { connect } from "react-redux";
+import "./css/mystyles.css";
 
 class App extends Component {
-  styleSwitch = {
-    width: "30%",
-    border: "thin solid gray",
-    borderWidth: "thin",
-    padding: "0.5em",
-    height: "1em",
-    margin: "1em",
-    cursor: "pointer"
-  }
 
-  styleSelected = {
-    borderColor: config.theme.colors.border, 
-    borderWidth: "2px"
-  }
+
 
   render() {
+    const buttonClass = 'button is-medium'
     return (
-      <div className="App">
-        <div style={{display: "flex", justifyContent: "center"}}>
-          <div style={{width: "30%"}}></div>
-          <div style={{width: "40%"}}><p>Wins: {this.props.wins}</p>
-          <p>Loses: {this.props.loses}</p></div>
-          <div style={{display: "flex", flexDirection: "row", width: "30%"}}>
-          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'easy' ? this.styleSelected: null)}}
-            onClick={() => this.props.changeDifficulty('easy')}
-          > Easy </div>
-          <div style={{...this.styleSwitch, ...(this.props.difficulty === 'medium' ? this.styleSelected: null)}}
-            onClick={() => this.props.changeDifficulty('medium')}
-          > Medium </div>
-            <div style={{...this.styleSwitch, ...(this.props.difficulty === 'hard' ? this.styleSelected: null)}}
-              onClick={() => this.props.changeDifficulty('hard')}
-            > Hard </div></div>
-      </div>
-        <Gameboard
-          wins= {this.props.wins}
-          loses= {this.props.loses}
-          OnWin= {this.props.UpdateWin}
-          OnLose= {this.props.UpdateLose}
-          difficulty= {this.props.difficulty}
-        />
+      <div>
+        <nav className={"navbar is-primary"}>
+          <div className={"container"}>
+            <div className={"navbar-brand"}>
+            <h1 className={"navbar-item"}>Nosabo-Sounds </h1>
+          </div>
+        </div>
+        </nav>
+        <div className={"section"}>
+          <div className={"columns content"}>
+            <div className={"column"} />
+            <div className={"column has-text-centered"}>
+              <h3>Wins: {this.props.wins}</h3>
+              <h3>Loses: {this.props.loses}</h3>
+            </div>
+            <div className={"column buttons has-text-centered"}>
+              <div
+                className={buttonClass + (this.props.difficulty === "easy" ? " is-primary" : "")}
+                onClick={() => this.props.changeDifficulty("easy")}
+              >
+                Easy
+              </div>
+              <div
+                className={buttonClass + (this.props.difficulty === "medium" ? " is-warning" : "")}
+                onClick={() => this.props.changeDifficulty("medium")}
+              >
+                Medium
+              </div>
+              <div
+                className={buttonClass + (this.props.difficulty === "hard" ? " is-danger" : "")}
+                onClick={() => this.props.changeDifficulty("hard")}
+              >
+                Hard
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={"column has-text-centered"}>
+          <Gameboard
+            wins={this.props.wins}
+            loses={this.props.loses}
+            OnWin={this.props.UpdateWin}
+            OnLose={this.props.UpdateLose}
+            difficulty={this.props.difficulty}
+          />
+        </div>
       </div>
     );
   }
@@ -56,26 +69,26 @@ const mapStateToProps = state => {
     wins: state.wins,
     loses: state.loses,
     difficulty: state.difficulty
-  }
-}
+  };
+};
 
 const mapDispatchToProps = dispatch => {
   return {
     UpdateWin: () => {
-      dispatch(Actions.incrementWins())
+      dispatch(Actions.incrementWins());
     },
     UpdateLose: () => {
-      dispatch(Actions.incrementLoses())
+      dispatch(Actions.incrementLoses());
     },
-    changeDifficulty: (diff) => {
-      dispatch(Actions.changeDifficulty(diff))
+    changeDifficulty: diff => {
+      dispatch(Actions.changeDifficulty(diff));
     }
-  }
-}
+  };
+};
 
 const PrepareApp = connect(
   mapStateToProps,
   mapDispatchToProps
-)(App)
+)(App);
 
 export default PrepareApp;

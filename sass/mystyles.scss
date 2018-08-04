@@ -1,3 +1,30 @@
+@charset "utf-8";
+
+$orange:       #FF7518;
+$yellow:       #f1c40f;
+$green:        #2ecc71;
+$turquoise:    #14a789;
+$blue:         #3498db;
+$purple:       #8e44ad;
+$red:          #e74c3c;
+
+$primary: $purple !default;
+
+$primary: $purple !default;
+$warning: $orange;
+
+$orange-invert: #fff;
+$warning-invert: $orange-invert;
+
+$background: lighten($primary, 50);
+
+$family-sans-serif: 'Muli', "Helvetica Neue", Arial, sans-serif;
+$body-size: 14px;
+
+$subtitle-color: darken($primary, 10);
+
+@import "../node_modules/bulma/bulma.sass";
+
 .announcer {
   margin-top: 40px;
   display:inline-block;
