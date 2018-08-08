@@ -1,61 +1,42 @@
+// @flow
+
 import React, { Component } from "react";
 import "./App.css";
 import { Gameboard } from "./components/gameboard";
 import * as Actions from "./redux/actions";
 import { connect } from "react-redux";
+import { SettingsPanel } from "./components/settings-panel";
+import {NavBar} from './components/nav-bar';
 import "./css/mystyles.css";
 
-class App extends Component {
+type Props = {
+  wins: number,
+  loses: number,
+  difficulty: string,
 
+  changeDifficulty: (diff: string) => void;
+  updateWin: () => void;
+  updateLose: () => void
+}
 
-
+class App extends Component<Props> {
   render() {
-    const buttonClass = 'button is-medium'
+    const buttonClass = "button is-medium";
     return (
       <div>
-        <nav className={"navbar is-primary"}>
-          <div className={"container"}>
-            <div className={"navbar-brand"}>
-            <h1 className={"navbar-item"}>Nosabo-Sounds </h1>
-          </div>
-        </div>
-        </nav>
-        <div className={"section"}>
-          <div className={"columns content"}>
-            <div className={"column"} />
-            <div className={"column has-text-centered"}>
-              <h3>Wins: {this.props.wins}</h3>
-              <h3>Loses: {this.props.loses}</h3>
-            </div>
-            <div className={"column buttons has-text-centered"}>
-              <div
-                className={buttonClass + (this.props.difficulty === "easy" ? " is-primary" : "")}
-                onClick={() => this.props.changeDifficulty("easy")}
-              >
-                Easy
-              </div>
-              <div
-                className={buttonClass + (this.props.difficulty === "medium" ? " is-warning" : "")}
-                onClick={() => this.props.changeDifficulty("medium")}
-              >
-                Medium
-              </div>
-              <div
-                className={buttonClass + (this.props.difficulty === "hard" ? " is-danger" : "")}
-                onClick={() => this.props.changeDifficulty("hard")}
-              >
-                Hard
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <NavBar brandName={'Nosabo-Sounds'}/>
+        <SettingsPanel
+          wins={this.props.wins}
+          loses={this.props.loses}
+          difficulty={this.props.difficulty}
+          onChangedDifficulty={(diff)=> this.props.changeDifficulty(diff)}
+        />
         <div className={"column has-text-centered"}>
           <Gameboard
             wins={this.props.wins}
             loses={this.props.loses}
-            OnWin={this.props.UpdateWin}
-            OnLose={this.props.UpdateLose}
+            OnWin={this.props.updateWin}
+            OnLose={this.props.updateLose}
             difficulty={this.props.difficulty}
           />
         </div>
@@ -74,10 +55,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    UpdateWin: () => {
+    updateWin: () => {
       dispatch(Actions.incrementWins());
     },
-    UpdateLose: () => {
+    updateLose: () => {
       dispatch(Actions.incrementLoses());
     },
     changeDifficulty: diff => {

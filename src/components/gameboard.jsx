@@ -1,3 +1,4 @@
+/* @flow */
 import React from "react";
 import { Scale } from "./scale";
 import "../css/mystyles.css";
@@ -5,7 +6,15 @@ import { config } from "../config";
 import { StepButton } from "./stepbutton";
 import { StepInfo } from "./stepinfo";
 
-export class Gameboard extends React.Component {
+type Props = {
+  wins: number,
+  loses: number,
+  OnWin: () => void,
+  OnLose: () => void,
+  difficulty: string,
+}
+
+export class Gameboard extends React.Component<Props> {
   constructor(props) {
     super(props);
     let notesSeq = config.difficulty[props.difficulty].notesInSequence;
