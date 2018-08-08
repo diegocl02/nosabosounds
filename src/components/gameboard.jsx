@@ -1,9 +1,20 @@
+/* @flow */
 import React from "react";
 import { Scale } from "./scale";
 import "../css/mystyles.css";
 import { config } from "../config";
+import { StepButton } from "./stepbutton";
+import { StepInfo } from "./stepinfo";
 
-export class Gameboard extends React.Component {
+type Props = {
+  wins: number,
+  loses: number,
+  OnWin: () => void,
+  OnLose: () => void,
+  difficulty: string,
+}
+
+export class Gameboard extends React.Component<Props> {
   constructor(props) {
     super(props);
     let notesSeq = config.difficulty[props.difficulty].notesInSequence;
@@ -11,25 +22,27 @@ export class Gameboard extends React.Component {
 
     this.state = {
       isWinner: 0,
-      step: this.steps[0],
+      step: 0,
       seq: this.generateRandomSeq(notesSeq, notesSca),
       record_seq: []
     };
   }
 
   steps = {
-    0: "Begin",
-    1: "You Win, play Again?",
-    2: "You Lose, Try again?"
+    0: {button: "Begin", info: "Press Begin to start!"},
+    1: {button: false, info: "First, listen to the melody"},
+    2: {button: false, info: "Now, try to play the same melody"},
+    3: {button: "Play Again?", info: "You Win"},
+    4: {button: "Play Again?", info: "You Lose"},
   };
 
   generateScale = () => (
     <Scale
-      isPlayable={this.state.step === "Now, try to play the same melody"}
+      isPlayable={this.state.step === 2}
       reportRecordedSeq={seq => this.checkWinner(seq)}
       reportPlayFinish={() =>
         this.setState({
-          step: "Now, try to play the same melody"
+          step: 2
         })
       }
       noteNumber={config.difficulty[this.props.difficulty].notesInScale}
@@ -41,7 +54,7 @@ export class Gameboard extends React.Component {
   checkWinner(seq) {
     let seq_equal = this.state.seq.join() === seq.join();
     this.setState({
-      step: seq_equal ? "You Win, play Again?" : "You Lose, Try again?",
+      step: seq_equal ? 3 : 4,
       isWinner: seq_equal ? 1 : 0,
       record_seq: seq
     });
@@ -60,16 +73,16 @@ export class Gameboard extends React.Component {
 
   setSteps() {
     switch (this.state.step) {
-      case "Begin":
-        this.setState({ step: "First listen to the melody..." });
+      case 0:
+        this.setState({ step: 1 });
         break;
-      case "First listen to the melody...":
+      case 1:
         break;
-      case "Now, try to play the same melody":
+      case 2:
         break;
       default:
         this.setState({
-          step: "Begin",
+          step: 0,
           seq: this.generateRandomSeq(
             config.difficulty[this.props.difficulty].notesInSequence,
             config.difficulty[this.props.difficulty].notesInScale
@@ -83,7 +96,7 @@ export class Gameboard extends React.Component {
   componentDidUpdate(nextProps) {
     if (nextProps.difficulty !== this.props.difficulty) {
       this.setState({
-        step: "Begin",
+        step: 0,
         seq: this.generateRandomSeq(
           config.difficulty[this.props.difficulty].notesInSequence,
           config.difficulty[this.props.difficulty].notesInScale
@@ -94,23 +107,22 @@ export class Gameboard extends React.Component {
   }
 
   render() {
-    // console.log("state in gameboard", this.state, this.props)
+    let step = this.steps[this.state.step]
+
     return (
       <div className="gameboard">
-        <div
-          className={
-            this.state.step === this.steps[0] ||
-            this.state.step === this.steps[1] ||
-            this.state.step === this.steps[2]
-              ? "announcer"
-              : "announcerAlternative"
-          }
-          style={{ width: "30vw" }}
-          onClick={() => this.setSteps()}
-        >
-          {this.state.step}
+        <StepInfo
+          info={this.steps[this.state.step].info}
+        />
+        <div>
+        {this.state.step !== 0 ? this.generateScale() : null}
         </div>
-        {this.state.step !== "Begin" ? this.generateScale() : null}
+        {step.button !== false ?
+        <StepButton
+          button={this.steps[this.state.step].button}
+          onPress={() => this.setSteps()}
+        /> : null
+        }
       </div>
     );
   }

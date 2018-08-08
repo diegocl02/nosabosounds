@@ -6439,7 +6439,6 @@ label.panel-block {
   border: 1px solid #CCC;
   background: white;
   box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
   vertical-align: middle;
   max-width: 30vw;
   padding: 5px;
