@@ -6,7 +6,7 @@ for ARG in "$@"
 do
 	KEY=$(echo $ARG | cut -f1 -d=)
     	VALUE=$(echo $ARG | cut -f2 -d=)
-    	
+
     	case "$KEY" in
 		--app-name) app_name=${VALUE} ;;
 		--repo-branch) repo_branch=${VALUE} ;;
@@ -28,13 +28,13 @@ echo "Branch Name is : $repo_branch"
 validate_arg $app_name
 validate_arg $repo_branch
 
-echo -e "-->Starting Deployment on Heroku for $app_name<--"
-heroku buildpacks:set https://github.com/mars/create-react-app-buildpack.git
- 
 #Add remote Heroku url of your app
 echo -e "\n-->Adding Heroku remote url<--"
 heroku git:remote -a $app_name
- 
+
+echo -e "-->Starting Deployment on Heroku for $app_name<--"
+heroku buildpacks:set https://github.com/mars/create-react-app-buildpack.git
+
 echo -e "\n-->Deploying the project on Heroku<--"
 #Push and deploy
 git push heroku $repo_branch --force
@@ -50,7 +50,7 @@ git push heroku $repo_branch --force
 # do
 # 	KEY=$(echo $ARG | cut -f1 -d=)
 #     	VALUE=$(echo $ARG | cut -f2 -d=)
-    	
+
 #     	case "$KEY" in
 # 		--app-name) app_name=${VALUE} ;;
 # 		--repo-branch) repo_branch=${VALUE} ;;
@@ -73,20 +73,20 @@ git push heroku $repo_branch --force
 # validate_arg $repo_branch
 
 # echo -e "-->Starting Deployment on Heroku for $app_name<--"
- 
+
 # #Move to the compiled folder, move a package.json that contains the npm start script
 # echo -e "\n-->Moving to the app folder<--"
 # cp package.json dist/package.json
 # cd dist
- 
+
 # #Initialize Git
 # echo -e "\n-->Initializing Heroku git on specific folder<--"
 # git init
- 
+
 # #Add remote Heroku url of your app
 # echo -e "\n-->Adding Heroku remote url<--"
 # ../node_modules/heroku-cli/bin/run git:remote -a $app_name
- 
+
 # #Add npm start to the package json file (npm start)
 # ## missing
 
@@ -94,7 +94,7 @@ git push heroku $repo_branch --force
 # #Commit files
 # git add .
 # git commit -m $commit_msg
- 
+
 # echo -e "\n-->Deploying the project on Heroku<--"
 # #Push and deploy
 # git push heroku $repo_branch --force
