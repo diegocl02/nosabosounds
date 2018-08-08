@@ -11,11 +11,17 @@ type Props = {
   loses: number,
   OnWin: () => void,
   OnLose: () => void,
-  difficulty: string,
-}
+  difficulty: string
+};
 
-export class Gameboard extends React.Component<Props> {
-  constructor(props) {
+type State = {
+  isWinner: number,
+  step: number,
+  seq: number[],
+  record_seq: number[]
+}
+export class Gameboard extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     let notesSeq = config.difficulty[props.difficulty].notesInSequence;
     let notesSca = config.difficulty[props.difficulty].notesInScale;
@@ -29,11 +35,11 @@ export class Gameboard extends React.Component<Props> {
   }
 
   steps = {
-    0: {button: "Begin", info: "Press Begin to start!"},
-    1: {button: false, info: "First, listen to the melody"},
-    2: {button: false, info: "Now, try to play the same melody"},
-    3: {button: "Play Again?", info: "You Win"},
-    4: {button: "Play Again?", info: "You Lose"},
+    [0]: { button: "Begin", info: "Press Begin to start!" },
+    [1]: { button: false, info: "First, listen to the melody" },
+    [2]: { button: false, info: "Now, try to play the same melody" },
+    [3]: { button: "Play Again?", info: "You Win" },
+    [4]: { button: "Play Again?", info: "You Lose" }
   };
 
   generateScale = () => (
@@ -51,7 +57,7 @@ export class Gameboard extends React.Component<Props> {
     />
   );
 
-  checkWinner(seq) {
+  checkWinner(seq: number[]) {
     let seq_equal = this.state.seq.join() === seq.join();
     this.setState({
       step: seq_equal ? 3 : 4,
@@ -62,7 +68,7 @@ export class Gameboard extends React.Component<Props> {
     else this.props.OnLose();
   }
 
-  generateRandomSeq(numberOfNotes, maxScale) {
+  generateRandomSeq(numberOfNotes: number, maxScale: number) {
     let newSeq = [];
     for (let i = 0; i < numberOfNotes; i++) {
       let ranIndex = Math.floor(Math.random() * maxScale);
@@ -93,7 +99,7 @@ export class Gameboard extends React.Component<Props> {
     }
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate(nextProps: Props) {
     if (nextProps.difficulty !== this.props.difficulty) {
       this.setState({
         step: 0,
@@ -107,22 +113,18 @@ export class Gameboard extends React.Component<Props> {
   }
 
   render() {
-    let step = this.steps[this.state.step]
+    let step = this.steps[this.state.step];
 
     return (
       <div className="gameboard">
-        <StepInfo
-          info={this.steps[this.state.step].info}
-        />
-        <div>
-        {this.state.step !== 0 ? this.generateScale() : null}
-        </div>
-        {step.button !== false ?
-        <StepButton
-          button={this.steps[this.state.step].button}
-          onPress={() => this.setSteps()}
-        /> : null
-        }
+        <StepInfo info={this.steps[this.state.step].info} />
+        <div>{this.state.step !== 0 ? this.generateScale() : null}</div>
+        {step.button !== false ? (
+          <StepButton
+            button={this.steps[this.state.step].button}
+            onPress={() => this.setSteps()}
+          />
+        ) : null}
       </div>
     );
   }
