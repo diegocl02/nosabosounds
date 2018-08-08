@@ -42,21 +42,6 @@ export class Gameboard extends React.Component<Props, State> {
     [4]: { button: "Play Again?", info: "You Lose" }
   };
 
-  generateScale = () => (
-    <Scale
-      isPlayable={this.state.step === 2}
-      reportRecordedSeq={seq => this.checkWinner(seq)}
-      reportPlayFinish={() =>
-        this.setState({
-          step: 2
-        })
-      }
-      noteNumber={config.difficulty[this.props.difficulty].notesInScale}
-      sequence={this.state.seq}
-      bpm={120}
-    />
-  );
-
   checkWinner(seq: number[]) {
     let seq_equal = this.state.seq.join() === seq.join();
     this.setState({
@@ -78,24 +63,17 @@ export class Gameboard extends React.Component<Props, State> {
   }
 
   setSteps() {
-    switch (this.state.step) {
-      case 0:
+    if(this.state.step === 0)
         this.setState({ step: 1 });
-        break;
-      case 1:
-        break;
-      case 2:
-        break;
-      default:
-        this.setState({
-          step: 0,
-          seq: this.generateRandomSeq(
-            config.difficulty[this.props.difficulty].notesInSequence,
-            config.difficulty[this.props.difficulty].notesInScale
-          ),
-          record_seq: []
-        });
-        break;
+    else {
+      this.setState({
+        step: 0,
+        seq: this.generateRandomSeq(
+          config.difficulty[this.props.difficulty].notesInSequence,
+          config.difficulty[this.props.difficulty].notesInScale
+        ),
+        record_seq: []
+      });
     }
   }
 
@@ -117,14 +95,29 @@ export class Gameboard extends React.Component<Props, State> {
 
     return (
       <div className="gameboard">
-        <StepInfo info={this.steps[this.state.step].info} />
-        <div>{this.state.step !== 0 ? this.generateScale() : null}</div>
-        {step.button !== false ? (
+        <StepInfo info={step.info} />
+        <div>
+          {this.state.step !== 0 ?
+            <Scale
+              isPlayable={this.state.step === 2}
+              reportRecordedSeq={seq => this.checkWinner(seq)}
+              reportPlayFinish={() =>
+                this.setState({
+                  step: 2
+                })
+              }
+              noteNumber={config.difficulty[this.props.difficulty].notesInScale}
+              sequence={this.state.seq}
+              bpm={120}
+            />
+            : null}
+        </div>
+        {step.button !== false ?
           <StepButton
-            button={this.steps[this.state.step].button}
+            button={step.button}
             onPress={() => this.setSteps()}
           />
-        ) : null}
+          : null}
       </div>
     );
   }
