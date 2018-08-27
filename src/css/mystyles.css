@@ -6447,6 +6447,6 @@ label.panel-block {
 .noteboard {
   margin-top: 40px;
   padding: 5px;
-  display: flex;
+  width: 60%;
   align-items: center;
   justify-content: center; }

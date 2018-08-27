@@ -1,8 +1,9 @@
 /* @flow */
 import * as React from "react";
 import Tone from "tone";
-import { Note } from "./note";
+import { Note, WholeNote } from "./note";
 import { config } from "../config";
+import { MusicStaff } from "./music-staff";
 
 type Props = {
   isPlayable: boolean,
@@ -11,16 +12,16 @@ type Props = {
   bpm: number,
 
   reportRecordedSeq: (seq: number[]) => void,
-  reportPlayFinish: () => void,
-}
+  reportPlayFinish: () => void
+};
 
 type State = {
   recordedNotes: number[],
   notePlaying: ?number
-}
+};
 
 export class Scale extends React.Component<Props, State> {
-  notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5"];
+  notes = ["E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5", "F5", "G5", "A6"];
   newNotes = [];
 
   constructor(props: Props) {
@@ -112,34 +113,62 @@ export class Scale extends React.Component<Props, State> {
     transition: `all 0.3s`
   };
 
+  // createNoteBoard() {
+  //   let element = new Array(this.props.noteNumber).fill(null);
+  //   let newElement = element.map((element, index) => (
+  //     <div
+  //       style={{
+  //         ...this.noteStyle,
+  //         fill:
+  //           index === this.state.notePlaying
+  //             ? config.theme.colors.alternative3
+  //             : "black",
+  //         cursor: "pointer"
+  //       }}
+  //     >
+  //       <Note
+  //         size={"4em"}
+  //         color={"inherit"}
+  //         onNoteClicked={() => {
+  //           if (this.props.isPlayable) this.handleNoteClicked(index);
+  //         }}
+  //       />
+  //     </div>
+  //   ));
+  //   return newElement;
+  // }
+
   createNoteBoard() {
     let element = new Array(this.props.noteNumber).fill(null);
-    let newElement = element.map((element, index) => (
-      <div
-        style={{
-          ...this.noteStyle,
-          fill:
-            index === this.state.notePlaying
-              ? config.theme.colors.alternative3
-              : "black",
-          cursor: "pointer"
+    let newElement = element.map((element, index) => [
+      this.notes[index],
+      <WholeNote
+        radius={"50"}
+        size={"100"}
+        color={
+          index === this.state.notePlaying
+            ? config.theme.colors.alternative3
+            : "black"
+        }
+        onNoteClicked={() => {
+          if (this.props.isPlayable) this.handleNoteClicked(index);
         }}
-      >
-        <Note
-          size={"4em"}
-          color={"inherit"}
-          onNoteClicked={() => {
-            if (this.props.isPlayable) this.handleNoteClicked(index);
-          }}
-        />
-      </div>
-    ));
+      />
+    ]);
     return newElement;
   }
 
   render() {
     // console.log('State in Scale', this.state)
     // console.log('Props in Scale', this.props)
-    return <div className="noteboard">{this.createNoteBoard()}</div>;
+    const notes = this.notes.slice(0, this.props.noteNumber);
+    // return <div className="noteboard">{this.createNoteBoard()}</div>;
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="noteboard">
+          <MusicStaff notes={this.createNoteBoard()} />
+        </div>
+      </div>
+    );
   }
 }
