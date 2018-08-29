@@ -20,7 +20,7 @@ export const config = {
     },
     hard: {
       notesInSequence: 8,
-      notesInScale: 10
+      notesInScale: 9
     }
   }
 }

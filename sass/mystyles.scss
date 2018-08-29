@@ -55,7 +55,8 @@ $subtitle-color: darken($primary, 10);
 .noteboard {
   margin-top: 40px;
   padding: 5px;
-  display: flex;
+  // display: flex;
+  width: 60%;
   align-items: center;
   justify-content: center;
 }

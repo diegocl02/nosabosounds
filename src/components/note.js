@@ -6,6 +6,7 @@ interface Props {
   size: string;
   color: string;
   onNoteClicked: () => void;
+  radius: ?string
 }
 
 export const Note = (props: Props) => {
@@ -37,6 +38,19 @@ export const Note = (props: Props) => {
 	            c11.843-11.843,19.308-26.842,21.018-42.234c0.244-2.198,0.355-4.38,0.355-6.537h0.01V0z"
         />
       </svg>
+    </svg>
+  );
+};
+
+export const WholeNote = (props: Props) => {
+  return (
+    <svg
+      width={props.size}
+      height={props.size}
+      onClick={() => props.onNoteClicked()}
+      fill={props.color}
+    >
+      <circle cx={props.radius} cy={props.radius} r={props.radius} stroke="black" strokeWidth="0.1" />
     </svg>
   );
 };
